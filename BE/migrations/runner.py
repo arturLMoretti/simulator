@@ -8,7 +8,6 @@ This module provides a simple migration system that:
 
 import asyncio
 import importlib
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 

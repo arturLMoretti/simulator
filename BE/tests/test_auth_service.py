@@ -110,7 +110,7 @@ class TestAuthServiceRefresh:
     @pytest.mark.asyncio
     async def test_refresh_success(self, service: AuthService) -> None:
         """Refresh should return new access and refresh tokens."""
-        from core.security import create_access_token, create_refresh_token
+        from core.security import create_refresh_token
 
         # Create valid refresh token
         token_data = {"sub": "123", "email": "test@example.com"}
