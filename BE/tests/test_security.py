@@ -25,8 +25,8 @@ class TestPasswordHashing:
 
         # Hashes should be different due to unique salt
         assert hash1 != hash2
-        assert hash1.startswith("$")
-        assert hash2.startswith("$")
+        assert "$" in hash1
+        assert "$" in hash2
 
     def test_hash_password_format(self) -> None:
         """Hash should be in format salt$digest."""

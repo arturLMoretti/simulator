@@ -1,13 +1,13 @@
 """Pydantic request / response schemas for the auth module."""
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 # ── Requests ──────────────────────────────────────────────────────────
 
 class AuthRequest(BaseModel):
     email: EmailStr
-    password: str
+    password: str = Field(min_length=1)
 
 
 class RefreshTokenRequest(BaseModel):

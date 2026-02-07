@@ -30,7 +30,7 @@ class TestAuthServiceRegister:
         result = await service.register("new@example.com", "password123")
 
         assert result == {"message": "Account created"}
-        mock_pool.execute.assert_called_once()
+        mock_pool.fetchrow.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_register_duplicate_email(self, service: AuthService, mock_pool: MagicMock) -> None:
@@ -54,9 +54,17 @@ class TestAuthServiceLogin:
         return AuthService(repo)
 
     @pytest.fixture
-    def sample_user_record(self, sample_user_record: MagicMock) -> MagicMock:
-        """Return sample user record."""
-        return sample_user_record
+    def sample_user_record(self) -> MagicMock:
+        """Create sample user record mock with proper password hash."""
+        from core.security import hash_password
+        record = MagicMock()
+        record.__getitem__ = MagicMock(side_effect=lambda key: {
+            "id": 1,
+            "email": "test@example.com",
+            "password_hash": hash_password("password123"),
+            "created_at": "2024-01-01T00:00:00Z",
+        }.get(key))
+        return record
 
     @pytest.mark.asyncio
     async def test_login_success(
