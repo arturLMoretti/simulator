@@ -8,7 +8,6 @@ import pytest
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from core.security import hash_password
 from modules.auth.exceptions import EmailAlreadyRegistered, InvalidCredentials
 from modules.auth.repository import AuthRepository
 from modules.auth.service import AuthService

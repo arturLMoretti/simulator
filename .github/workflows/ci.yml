@@ -59,7 +59,7 @@ jobs:
 
   frontend-tests:
     runs-on: ubuntu-latest
-    needs: lint
+    needs: [lint, backend-tests]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

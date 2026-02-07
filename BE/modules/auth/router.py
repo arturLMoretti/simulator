@@ -3,7 +3,7 @@
 No business logic here.  The router only knows about schemas and the service.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter
 
 from core.database import get_pool
 from modules.auth.repository import AuthRepository
@@ -12,7 +12,6 @@ from modules.auth.schemas import (
     MessageResponse,
     RefreshTokenRequest,
     TokenResponse,
-    UserResponse,
 )
 from modules.auth.service import AuthService
 

@@ -2,6 +2,7 @@
 import sys
 from pathlib import Path
 
+import pytest
 from pydantic import ValidationError
 
 # Add parent directory to path for imports
