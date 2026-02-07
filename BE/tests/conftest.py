@@ -1,9 +1,14 @@
 """Pytest configuration and fixtures."""
 import asyncio
-from typing import AsyncGenerator, Generator
+import sys
+from pathlib import Path
+from typing import Generator
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core.security import hash_password, verify_password
 

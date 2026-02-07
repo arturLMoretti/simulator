@@ -3,13 +3,15 @@
  * Delegates API call to the useLogin hook.
  */
 import { useState } from 'react'
-import { useLogin } from '../hooks/useLogin'
+import { useLogin } from '@features/auth/hooks/useLogin'
+import { useToastStore } from '@store/toastStore'
 
 export default function LoginForm({ onSuccess, onSwitchToRegister }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const loginMutation = useLogin()
+  const { success, error } = useToastStore()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -19,7 +21,11 @@ export default function LoginForm({ onSuccess, onSwitchToRegister }) {
       { email: email.trim(), password },
       {
         onSuccess: (res) => {
+          success('Logged in successfully!')
           onSuccess?.(res.data)
+        },
+        onError: (err) => {
+          error(err.message || 'Login failed')
         },
       },
     )

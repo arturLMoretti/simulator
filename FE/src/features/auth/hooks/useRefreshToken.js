@@ -2,8 +2,8 @@
  * Refresh token hook — provides a function to refresh the access token.
  */
 import { useMutation } from '@tanstack/react-query'
-import { authApi } from '../../../api/endpoints/auth'
-import { useAuthStore } from '../store/authStore'
+import { authApi } from '@api/endpoints/auth'
+import { useAuthStore } from '@features/auth/store/authStore'
 
 export function useRefreshToken() {
   const setAuth = useAuthStore((state) => state.setAuth)

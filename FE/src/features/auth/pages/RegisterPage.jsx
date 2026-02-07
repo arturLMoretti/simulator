@@ -3,7 +3,7 @@
  * Composes the RegisterForm inside the auth card layout.
  */
 import { useNavigate } from 'react-router-dom'
-import RegisterForm from '../components/RegisterForm'
+import RegisterForm from '@features/auth/components/RegisterForm'
 
 export default function RegisterPage() {
   const navigate = useNavigate()

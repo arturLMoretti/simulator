@@ -3,13 +3,15 @@
  * Delegates API call to the useRegister hook.
  */
 import { useState } from 'react'
-import { useRegister } from '../hooks/useRegister'
+import { useRegister } from '@features/auth/hooks/useRegister'
+import { useToastStore } from '@store/toastStore'
 
 export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   const registerMutation = useRegister()
+  const { success, error } = useToastStore()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -20,7 +22,11 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
       {
         onSuccess: (res) => {
           setPassword('')
+          success('Account created successfully!')
           onSuccess?.(res.data)
+        },
+        onError: (err) => {
+          error(err.message || 'Registration failed')
         },
       },
     )

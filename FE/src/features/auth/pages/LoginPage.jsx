@@ -4,8 +4,8 @@
  */
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import LoginForm from '../components/LoginForm'
-import { useAuthStore } from '../store/authStore'
+import LoginForm from '@features/auth/components/LoginForm'
+import { useAuthStore } from '@features/auth/store/authStore'
 
 export default function LoginPage() {
   const navigate = useNavigate()

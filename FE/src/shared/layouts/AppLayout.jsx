@@ -3,7 +3,7 @@
  * Includes a header with logout; content area renders child routes.
  */
 import { Outlet } from 'react-router-dom'
-import { useAuthStore } from '../../features/auth/store/authStore'
+import { useAuthStore } from '@features/auth/store/authStore'
 
 export default function AppLayout() {
   const user = useAuthStore((s) => s.user)

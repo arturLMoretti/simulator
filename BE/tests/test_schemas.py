@@ -1,6 +1,11 @@
 """Tests for modules/auth/schemas.py."""
+import sys
+from pathlib import Path
 
 from pydantic import ValidationError
+
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from modules.auth.schemas import (
     AuthRequest,

@@ -55,8 +55,8 @@ apiClient.interceptors.response.use(
 
         try {
           // Import dynamically to avoid circular dependency
-          const { useAuthStore } = await import('../features/auth/store/authStore')
-          const { authApi } = await import('../api/endpoints/auth')
+          const { useAuthStore } = await import('@features/auth/store/authStore')
+          const { authApi } = await import('@api/endpoints/auth')
           
           const refreshToken = useAuthStore.getState().refreshToken
           if (!refreshToken) {
@@ -73,7 +73,7 @@ apiClient.interceptors.response.use(
           return apiClient(originalRequest)
         } catch (refreshError) {
           processQueue(refreshError)
-          const { useAuthStore } = await import('../features/auth/store/authStore')
+          const { useAuthStore } = await import('@features/auth/store/authStore')
           useAuthStore.getState().logout()
           return Promise.reject(refreshError)
         } finally {

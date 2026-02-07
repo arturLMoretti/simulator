@@ -1,8 +1,12 @@
 """Tests for modules/auth/service.py."""
-
+import sys
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core.security import hash_password
 from modules.auth.exceptions import EmailAlreadyRegistered, InvalidCredentials

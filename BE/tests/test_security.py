@@ -1,8 +1,12 @@
 """Tests for core/security.py - password hashing and JWT utilities."""
-
+import sys
 from datetime import timedelta
+from pathlib import Path
 
 import pytest
+
+# Add parent directory to path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from core.security import (
     create_access_token,

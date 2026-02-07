@@ -5,13 +5,13 @@
  * - App routes use AppLayout (header + content) behind ProtectedRoute
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
-import AuthLayout from './shared/layouts/AuthLayout'
-import AppLayout from './shared/layouts/AppLayout'
-import ProtectedRoute from './features/auth/components/ProtectedRoute'
+import AuthLayout from '@layouts/AuthLayout'
+import AppLayout from '@layouts/AppLayout'
+import ProtectedRoute from '@features/auth/components/ProtectedRoute'
 
-import LoginPage from './features/auth/pages/LoginPage'
-import RegisterPage from './features/auth/pages/RegisterPage'
-import DashboardPage from './features/dashboard/pages/DashboardPage'
+import LoginPage from '@features/auth/pages/LoginPage'
+import RegisterPage from '@features/auth/pages/RegisterPage'
+import DashboardPage from '@features/dashboard/pages/DashboardPage'
 
 export const router = createBrowserRouter([
   // ── Public (auth) routes ───────────────────────────────────────────
