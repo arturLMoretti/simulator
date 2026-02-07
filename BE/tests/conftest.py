@@ -1,8 +1,6 @@
 """Pytest configuration and fixtures."""
-import asyncio
 import sys
 from pathlib import Path
-from typing import Iterator
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
