@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "npx eslint .",
+    "lint": "./node_modules/.bin/eslint .",
     "preview": "vite preview",
     "test": "vitest"
   },

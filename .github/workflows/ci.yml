@@ -33,6 +33,10 @@ jobs:
 
       - name: Frontend lint
         working-directory: ./FE
+        run: npm ci
+
+      - name: Run frontend lint
+        working-directory: ./FE
         run: npm run lint
 
   backend-tests:
