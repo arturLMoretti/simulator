@@ -2,7 +2,7 @@
 import asyncio
 import sys
 from pathlib import Path
-from typing import Generator
+from typing import Iterator
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -14,7 +14,7 @@ from core.security import hash_password
 
 
 @pytest.fixture(scope="session")
-def event_loop() -> Generator[asyncio.AbstractEventLoop]:
+def event_loop() -> Iterator[asyncio.AbstractEventLoop]:
     """Create event loop for async tests."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
