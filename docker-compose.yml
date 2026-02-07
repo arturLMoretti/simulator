@@ -1,0 +1,60 @@
+services:
+  db:
+    build:
+      context: ./DB
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: login_user
+      POSTGRES_PASSWORD: login_pass
+      POSTGRES_DB: login_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U login_user -d login_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 45s
+    ports:
+      - "5432:5432"
+    networks:
+      - app
+
+  be:
+    build:
+      context: ./BE
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: login_db
+      DB_USER: login_user
+      DB_PASSWORD: login_pass
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "18080:18080"
+    networks:
+      - app
+
+  fe:
+    build:
+      context: ./FE
+      dockerfile: Dockerfile
+      args:
+        # URL the browser uses to reach the API (host machine)
+        VITE_API_URL: http://localhost:18080
+    depends_on:
+      - be
+    ports:
+      - "3000:80"
+    networks:
+      - app
+
+volumes:
+  db_data:
+
+networks:
+  app:
+    driver: bridge

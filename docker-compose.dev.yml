@@ -1,0 +1,78 @@
+# Development configuration with hot-reloading via bind mounts.
+# Run with: docker compose -f docker-compose.dev.yml up
+#
+# Changes to source files will reflect immediately:
+# - BE: uvicorn --reload watches Python files
+# - FE: vite dev server with HMR (port 5173)
+
+services:
+  db:
+    build:
+      context: ./DB
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: login_user
+      POSTGRES_PASSWORD: login_pass
+      POSTGRES_DB: login_db
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U login_user -d login_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 45s
+    ports:
+      - "5432:5432"
+    networks:
+      - app
+
+  be:
+    image: python:3.12-slim
+    working_dir: /app
+    command: >
+      sh -c "pip install --no-cache-dir -r requirements.txt &&
+      python -m migrations run &&
+      python -m watchfiles 'uvicorn main:app --host 0.0.0.0 --port 18080 --reload'"
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: login_db
+      DB_USER: login_user
+      DB_PASSWORD: login_pass
+    volumes:
+      - ./BE:/app
+      - be_cache:/root/.cache/pip
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "18080:18080"
+    networks:
+      - app
+
+  fe:
+    image: node:20-alpine
+    working_dir: /app
+    command: >
+      sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+    environment:
+      VITE_API_URL: http://localhost:18080
+    volumes:
+      - ./FE:/app
+      - fe_cache:/root/.npm
+    depends_on:
+      - be
+    ports:
+      - "5173:5173"
+    networks:
+      - app
+
+volumes:
+  db_data:
+  be_cache:
+  fe_cache:
+
+networks:
+  app:
+    driver: bridge
