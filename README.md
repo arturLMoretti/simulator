@@ -51,13 +51,3 @@ Default credentials: `admin@example.com` / `admin123`
 - [`plans/FE-ARCHITECTURE.md`](plans/FE-ARCHITECTURE.md) — Frontend architecture: feature-sliced, two-tier state, routing
 
 ---
-
-## API
-
-| Method | Path           | Body (JSON)           | Description        |
-|--------|----------------|------------------------|--------------------|
-| POST   | `/api/register` | `{ "email", "password" }` | Create account     |
-| POST   | `/api/login`    | `{ "email", "password" }` | Sign in            |
-| GET    | `/api/health`   | -                      | Health check       |
-
-Success responses return JSON (e.g. `{ "message": "logged in" }`). Errors return JSON `{ "error": "..." }` with 4xx/5xx status.
