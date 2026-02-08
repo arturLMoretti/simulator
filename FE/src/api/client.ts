@@ -6,21 +6,21 @@
  * - Automatic token refresh on 401 responses
  * - Global error normalisation via response interceptor
  */
-import axios from 'axios'
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:18080'
 
-export const apiClient = axios.create({
+export const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE,
   headers: { 'Content-Type': 'application/json' },
 })
 
 // Store for the getToken function (set after auth store is created)
-let getAccessToken = null
-export const setGetAccessToken = (fn) => { getAccessToken = fn }
+let getAccessToken: (() => string | null) | null = null
+export const setGetAccessToken = (fn: () => string | null) => { getAccessToken = fn }
 
 // Request interceptor: inject Authorization header
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (getAccessToken) {
     const token = getAccessToken()
     if (token) {
@@ -32,9 +32,9 @@ apiClient.interceptors.request.use((config) => {
 
 // Response interceptor: handle 401 with token refresh
 let isRefreshing = false
-let failedRequestsQueue = []
+let failedRequestsQueue: Array<{ resolve: (token?: unknown) => void; reject: (error?: unknown) => void }> = []
 
-const processQueue = (error, token = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedRequestsQueue.forEach(({ resolve, reject }) => {
     if (error) reject(error)
     else resolve(token)
@@ -44,10 +44,16 @@ const processQueue = (error, token = null) => {
 
 apiClient.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    const originalRequest = error.config
+  async (error: unknown) => {
+    const axiosError = error as { 
+      config: InternalAxiosRequestConfig & { _retry?: boolean }; 
+      response?: { status?: number; data?: { error?: string; detail?: string } };
+      message?: string;
+    }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const originalRequest = axiosError.config
+
+    if (axiosError.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
       if (!isRefreshing) {
@@ -67,7 +73,7 @@ apiClient.interceptors.response.use(
           const { access_token, refresh_token } = response.data
           const user = useAuthStore.getState().user
 
-          useAuthStore.getState().setAuth(access_token, refresh_token, user)
+          useAuthStore.getState().setAuth(access_token, refresh_token, user!)
           
           processQueue(null, access_token)
           return apiClient(originalRequest)
@@ -85,7 +91,9 @@ apiClient.interceptors.response.use(
       return new Promise((resolve, reject) => {
         failedRequestsQueue.push({
           resolve: () => {
-            originalRequest.headers.Authorization = `Bearer ${getAccessToken()}`
+            if (getAccessToken) {
+              originalRequest.headers.Authorization = `Bearer ${getAccessToken()}`
+            }
             resolve(apiClient(originalRequest))
           },
           reject,
@@ -95,9 +103,9 @@ apiClient.interceptors.response.use(
 
     // Normalize error message
     const message =
-      error.response?.data?.error ||
-      error.response?.data?.detail ||
-      error.message ||
+      axiosError.response?.data?.error ||
+      axiosError.response?.data?.detail ||
+      axiosError.message ||
       'Network error'
 
     return Promise.reject(new Error(message))

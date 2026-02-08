@@ -1,8 +1,6 @@
 name: CI Pipeline
 
 on:
-  push:
-    branches: [dev, qa, master]
   pull_request:
     branches: [dev, qa, master]
 

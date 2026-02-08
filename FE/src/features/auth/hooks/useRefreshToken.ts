@@ -10,11 +10,11 @@ export function useRefreshToken() {
   const refreshToken = useAuthStore((state) => state.refreshToken)
 
   return useMutation({
-    mutationFn: () => authApi.refresh(refreshToken),
+    mutationFn: () => authApi.refresh(refreshToken!),
     onSuccess: (response) => {
       const { access_token, refresh_token } = response.data
       const user = useAuthStore.getState().user
-      setAuth(access_token, refresh_token, user)
+      setAuth(access_token, refresh_token, user!)
     },
     onError: () => {
       // Refresh failed - user needs to login again

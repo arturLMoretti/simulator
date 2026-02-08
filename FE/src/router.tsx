@@ -2,33 +2,37 @@
  * Centralised route definitions.
  *
  * - Auth routes use AuthLayout (centered card)
- * - App routes use AppLayout (header + content) behind ProtectedRoute
+ * - App routes use AppLayout (header + content) behind ProtectedRouteWithRedirect
  */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import AuthLayout from '@layouts/AuthLayout'
 import AppLayout from '@layouts/AppLayout'
-import ProtectedRoute from '@features/auth/components/ProtectedRoute'
+import { ProtectedRouteWithRedirect, PublicRouteWithRedirect } from '@features/auth/components/AuthRedirect'
 
 import LoginPage from '@features/auth/pages/LoginPage'
 import RegisterPage from '@features/auth/pages/RegisterPage'
 import DashboardPage from '@features/dashboard/pages/DashboardPage'
 
 export const router = createBrowserRouter([
-  // ── Public (auth) routes ───────────────────────────────────────────
+  // ── Public (auth) routes with redirect for authenticated users
   {
-    element: <AuthLayout />,
+    element: (
+      <PublicRouteWithRedirect>
+        <AuthLayout />
+      </PublicRouteWithRedirect>
+    ),
     children: [
       { path: '/login', element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
     ],
   },
 
-  // ── Protected (app) routes ─────────────────────────────────────────
+  // ── Protected (app) routes with redirect for unauthenticated users
   {
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteWithRedirect>
         <AppLayout />
-      </ProtectedRoute>
+      </ProtectedRouteWithRedirect>
     ),
     children: [
       { path: '/dashboard', element: <DashboardPage /> },
