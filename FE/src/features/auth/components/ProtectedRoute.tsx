@@ -1,10 +1,15 @@
 /**
  * Route guard — redirects unauthenticated users to /login.
  */
+import type { ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 
-export default function ProtectedRoute({ children }) {
+interface ProtectedRouteProps {
+  children: ReactNode
+}
+
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const token = useAuthStore((s) => s.accessToken)
   const location = useLocation()
 

@@ -17,8 +17,6 @@ export default function LoginPage() {
   useEffect(() => {
     if (accessToken && !hasRedirected.current) {
       hasRedirected.current = true
-      // Intentionally setting state to show welcome message
-      // eslint-disable-next-line
       setShowWelcome(true)
       const timer = setTimeout(() => {
         navigate('/dashboard', { replace: true })

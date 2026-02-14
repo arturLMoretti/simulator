@@ -6,6 +6,7 @@ import { authApi } from '../../../api/endpoints/auth'
 
 export function useRegister() {
   return useMutation({
-    mutationFn: ({ email, password }) => authApi.register(email, password),
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      authApi.register(email, password),
   })
 }

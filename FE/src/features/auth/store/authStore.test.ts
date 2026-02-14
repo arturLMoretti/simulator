@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/// <reference types="vitest/globals" />
 import { useAuthStore } from '../store/authStore'
 
 describe('useAuthStore', () => {
@@ -26,7 +26,7 @@ describe('useAuthStore', () => {
       const stored = localStorage.getItem('auth-storage')
       expect(stored).toBeTruthy()
       
-      const parsed = JSON.parse(stored)
+      const parsed = JSON.parse(stored!)
       expect(parsed.state.accessToken).toBe('token')
       expect(parsed.state.refreshToken).toBe('refresh')
       expect(parsed.state.user).toEqual({ id: 1, email: 'test@example.com' })
@@ -54,7 +54,7 @@ describe('useAuthStore', () => {
       const stored = localStorage.getItem('auth-storage')
       expect(stored).toBeTruthy()
       
-      const parsed = JSON.parse(stored)
+      const parsed = JSON.parse(stored!)
       expect(parsed.state.accessToken).toBeNull()
       expect(parsed.state.refreshToken).toBeNull()
       expect(parsed.state.user).toBeNull()

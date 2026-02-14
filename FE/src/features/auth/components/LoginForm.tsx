@@ -1,25 +1,29 @@
 /**
- * Register form component — handles account creation.
- * Delegates API call to the useRegister hook.
+ * Login form component — handles email/password input and submission.
+ * Delegates API call to the useLogin hook.
  */
-import { useState } from 'react'
-import { useRegister } from '../hooks/useRegister'
+import { useState, type FormEvent } from 'react'
+import { useLogin } from '../hooks/useLogin'
 
-export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
+interface LoginFormProps {
+  onSuccess?: (data: unknown) => void
+  onSwitchToRegister?: () => void
+}
+
+export default function LoginForm({ onSuccess, onSwitchToRegister }: LoginFormProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const registerMutation = useRegister()
+  const loginMutation = useLogin()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!email.trim() || !password) return
 
-    registerMutation.mutate(
+    loginMutation.mutate(
       { email: email.trim(), password },
       {
         onSuccess: (res) => {
-          setPassword('')
           onSuccess?.(res.data)
         },
       },
@@ -29,64 +33,64 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
-        <label htmlFor="register-email" className="block text-sm font-medium text-slate-200 mb-1.5">
+        <label htmlFor="login-email" className="block text-sm font-medium text-slate-200 mb-1.5">
           Email
         </label>
         <input
-          id="register-email"
+          id="login-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@example.com"
           autoComplete="email"
-          disabled={registerMutation.isPending}
+          disabled={loginMutation.isPending}
           className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition disabled:opacity-50"
         />
       </div>
 
       <div>
-        <label htmlFor="register-password" className="block text-sm font-medium text-slate-200 mb-1.5">
+        <label htmlFor="login-password" className="block text-sm font-medium text-slate-200 mb-1.5">
           Password
         </label>
         <input
-          id="register-password"
+          id="login-password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
-          autoComplete="new-password"
-          disabled={registerMutation.isPending}
+          autoComplete="current-password"
+          disabled={loginMutation.isPending}
           className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition disabled:opacity-50"
         />
       </div>
 
       {/* Error */}
-      {registerMutation.isError && (
+      {loginMutation.isError && (
         <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          {registerMutation.error?.message || 'Registration failed'}
+          {loginMutation.error?.message || 'Login failed'}
         </div>
       )}
 
       {/* Success */}
-      {registerMutation.isSuccess && (
+      {loginMutation.isSuccess && (
         <div className="flex items-center gap-2 text-sm text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-3 py-2">
           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          Account created. You can log in now.
+          Logged in successfully
         </div>
       )}
 
       {/* Submit */}
       <button
         type="submit"
-        disabled={registerMutation.isPending}
+        disabled={loginMutation.isPending}
         className="w-full py-2.5 rounded-lg font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-purple-500/25 cursor-pointer"
       >
-        {registerMutation.isPending ? (
+        {loginMutation.isPending ? (
           <span className="inline-flex items-center gap-2">
             <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -95,19 +99,19 @@ export default function RegisterForm({ onSuccess, onSwitchToLogin }) {
             Please wait…
           </span>
         ) : (
-          'Create account'
+          'Sign in'
         )}
       </button>
 
       {/* Toggle */}
       <div className="mt-6 text-center text-sm text-slate-400">
-        {'Already have an account? '}
+        {"Don't have an account? "}
         <button
           type="button"
-          onClick={onSwitchToLogin}
+          onClick={onSwitchToRegister}
           className="text-purple-400 hover:text-purple-300 font-medium transition cursor-pointer"
         >
-          Sign in
+          Register
         </button>
       </div>
     </form>

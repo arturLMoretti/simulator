@@ -7,7 +7,20 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-export const useAuthStore = create(
+export interface AuthUser {
+  id: number
+  email: string
+}
+
+export interface AuthState {
+  accessToken: string | null
+  refreshToken: string | null
+  user: AuthUser | null
+  setAuth: (accessToken: string, refreshToken: string, user: AuthUser | null) => void
+  logout: () => void
+}
+
+export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       accessToken: null,

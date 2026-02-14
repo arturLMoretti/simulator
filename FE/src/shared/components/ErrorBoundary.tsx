@@ -1,13 +1,27 @@
 /**
  * Global error boundary — catches unhandled React errors.
  */
-import { Component } from 'react'
+import { Component, type ErrorInfo, type ReactNode } from 'react'
 
-export default class ErrorBoundary extends Component {
-  state = { hasError: false, error: null }
+interface ErrorBoundaryProps {
+  children: ReactNode
+  fallback?: ReactNode
+}
 
-  static getDerivedStateFromError(error) {
+interface ErrorBoundaryState {
+  hasError: boolean
+  error: Error | null
+}
+
+export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  state: ErrorBoundaryState = { hasError: false, error: null }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error }
+  }
+
+  componentDidCatch(_error: Error, _info: ErrorInfo): void {
+    // Could log to an error reporting service here
   }
 
   render() {

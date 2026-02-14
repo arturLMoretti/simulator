@@ -11,7 +11,8 @@ export function useLogin() {
   const setAuth = useAuthStore((state) => state.setAuth)
 
   return useMutation({
-    mutationFn: ({ email, password }) => authApi.login(email, password),
+    mutationFn: ({ email, password }: { email: string; password: string }) =>
+      authApi.login(email, password),
     onSuccess: (response) => {
       const { access_token, refresh_token, user } = response.data
       setAuth(access_token, refresh_token, user)

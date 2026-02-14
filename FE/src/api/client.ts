@@ -6,7 +6,7 @@
  * - Automatic token refresh on 401 responses
  * - Global error normalisation via response interceptor
  */
-import axios from 'axios'
+import axios, { type InternalAxiosRequestConfig } from 'axios'
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:18080'
 
@@ -16,11 +16,11 @@ export const apiClient = axios.create({
 })
 
 // Store for the getToken function (set after auth store is created)
-let getAccessToken = null
-export const setGetAccessToken = (fn) => { getAccessToken = fn }
+let getAccessToken: (() => string | null) | null = null
+export const setGetAccessToken = (fn: () => string | null): void => { getAccessToken = fn }
 
 // Request interceptor: inject Authorization header
-apiClient.interceptors.request.use((config) => {
+apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (getAccessToken) {
     const token = getAccessToken()
     if (token) {
@@ -32,9 +32,12 @@ apiClient.interceptors.request.use((config) => {
 
 // Response interceptor: handle 401 with token refresh
 let isRefreshing = false
-let failedRequestsQueue = []
+let failedRequestsQueue: Array<{
+  resolve: (token?: string | null) => void
+  reject: (error: unknown) => void
+}> = []
 
-const processQueue = (error, token = null) => {
+const processQueue = (error: unknown, token: string | null = null): void => {
   failedRequestsQueue.forEach(({ resolve, reject }) => {
     if (error) reject(error)
     else resolve(token)
@@ -85,7 +88,7 @@ apiClient.interceptors.response.use(
       return new Promise((resolve, reject) => {
         failedRequestsQueue.push({
           resolve: () => {
-            originalRequest.headers.Authorization = `Bearer ${getAccessToken()}`
+            originalRequest.headers.Authorization = `Bearer ${getAccessToken?.()}`
             resolve(apiClient(originalRequest))
           },
           reject,
